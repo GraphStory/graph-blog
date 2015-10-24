@@ -1,0 +1,71 @@
+# Basic entities
+```
+Post
+- slug
+- title
+- date
+- body
+
+Tag
+- title
+- slug
+
+Category
+- title
+- slug
+
+Author
+- username
+- email
+- firstName
+- lastName
+```
+
+# Constraints
+```
+CREATE CONSTRAINT ON (p:Post) ASSERT p.slug IS UNIQUE;
+CREATE CONSTRAINT ON (t:Tag) ASSERT t.title IS UNIQUE;
+CREATE CONSTRAINT ON (t:Tag) ASSERT t.slug IS UNIQUE;
+CREATE CONSTRAINT ON (c:Category) ASSERT c.title IS UNIQUE;
+CREATE CONSTRAINT ON (c:Category) ASSERT c.slug IS UNIQUE;
+CREATE CONSTRAINT ON (a:Author) ASSERT a.username IS UNIQUE;
+CREATE CONSTRAINT ON (a:Author) ASSERT a.email IS UNIQUE;
+```
+# Data
+
+```
+MERGE (p:Post {
+        slug:'my-first-blog-post',
+        title:'My First Blog Post',
+        date:1445724363,
+        body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    }
+) return p;
+
+MERGE (t:Tag {title:'Mental Health', slug:'mental-health'}) return t;
+
+MERGE (c:Category {title:'General', slug:'general'}) return c;
+
+MERGE (a:Author {username:'funkatron', email:'coj@funkatron.com', firstName:'Ed', lastName:'Finkler'}) return a;
+```
+
+# Relationships
+
+```
+MATCH (p:Post {slug:'my-first-blog-post'}), (a:Author {username:'funkatron'})
+MERGE (p)-[r:AUTHORED_BY]->(a)
+RETURN p,r,a;
+
+MATCH (p:Post {slug:'my-first-blog-post'}), (t:Tag {slug:'mental-health'})
+MERGE (p)-[r:TAGGED_WITH]->(t)
+RETURN p,r,t;
+
+MATCH (p:Post {slug:'my-first-blog-post'}), (c:Category {slug:'general'})
+MERGE (p)-[r:CATEGORIZED_AS]->(c)
+RETURN p,r,c;
+```
