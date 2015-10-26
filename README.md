@@ -91,3 +91,14 @@ RETURN p,r,c;
 (p)-[:TAGGED_WITH *n..n]->(t *2)
 (p)-[:CATEGORIZED_AS *n..n]->(c *1)
 ```
+
+# Queries
+
+## Get a post with all related data
+
+```
+MATCH (p:Post {slug:'modi-aperiam-eos-eveniet-quas'})-[:TAGGED_WITH]->(t:Tag),
+(p)-[:CATEGORIZED_AS]->(c:Category),
+(p)-[:AUTHORED_BY]->(a:Author)
+RETURN p, COLLECT(t) as tags, COLLECT(c) as categories, a;
+```
