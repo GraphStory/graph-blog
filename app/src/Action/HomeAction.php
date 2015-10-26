@@ -1,5 +1,5 @@
 <?php
-namespace App\Action;
+namespace GraphBlog\Action;
 
 use Slim\Views\Twig;
 use Psr\Log\LoggerInterface;
