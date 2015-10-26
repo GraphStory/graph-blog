@@ -3,3 +3,10 @@
 
 $app->get('/', 'GraphBlog\Action\HomeAction:dispatch')
     ->setName('homepage');
+
+$app->get('/post', function($request, $response, $args) {
+    $container = $this->getContainer();
+    /** @var  $postService */
+    $postService = $container->get('postService');
+    var_dump($postService->getPostBySlug('modi-aperiam-eos-eveniet-quas'));
+})->setName('get-post');
