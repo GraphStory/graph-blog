@@ -37,6 +37,46 @@ $container['logger'] = function ($c) {
     return $logger;
 };
 
+// neoClient
+$container['neoClient'] = function ($c) {
+    $settings = $c->get('settings');
+    $client = \Neoxygen\NeoClient\ClientBuilder::create()
+        ->addConnection(
+            $settings['neo4j']['alias'],
+            $settings['neo4j']['protocol'],
+            $settings['neo4j']['host'],
+            $settings['neo4j']['port'],
+            $settings['neo4j']['authmode'],
+            $settings['neo4j']['username'],
+            $settings['neo4j']['password']
+        )
+        ->setDefaultTimeout($settings['neo4j']['timeout'])
+        ->setLogger('neoClient', $c->get('logger'))
+        ->setAutoFormatResponse(true)
+        ->build();
+    return $client;
+};
+
+// postService
+$container['postService'] = function ($c) {
+    $authorRepo = new \GraphBlog\Repository\AuthorRepository();
+    $categoryRepo = new \GraphBlog\Repository\CategoryRepository();
+    $postRepo = new \GraphBlog\Repository\PostRepository(
+        $c->get('neoClient'),
+        $c->get('logger')
+    );
+    $tagRepo = new \GraphBlog\Repository\TagRepository();
+    $postService = new \GraphBlog\Service\PostService(
+        $postRepo,
+        $authorRepo,
+        $categoryRepo,
+        $tagRepo,
+        $c->get('logger')
+    );
+    return $postService;
+};
+
+
 // -----------------------------------------------------------------------------
 // Action factories
 // -----------------------------------------------------------------------------
