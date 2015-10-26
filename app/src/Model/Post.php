@@ -26,16 +26,6 @@ class Post extends AbstractModel
      */
     public $body;
 
-    /**
-     * @param array $props
-     */
-    public function __construct(array $props)
-    {
-        $this->title = $props['title'];
-        $this->slug = $props['slug'];
-        $this->date = $props['date'];
-        $this->body = $props['body'];
-    }
 
     /**
      * @param array $props
