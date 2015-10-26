@@ -1,3 +1,10 @@
+# Data class structure
+
+Service -> Repository
+Repository returns Model or array of Models
+
+
+
 # Basic entities
 ```
 Post
@@ -22,6 +29,7 @@ Author
 ```
 
 # Constraints
+
 ```
 CREATE CONSTRAINT ON (p:Post) ASSERT p.slug IS UNIQUE;
 CREATE CONSTRAINT ON (t:Tag) ASSERT t.title IS UNIQUE;
@@ -31,6 +39,7 @@ CREATE CONSTRAINT ON (c:Category) ASSERT c.slug IS UNIQUE;
 CREATE CONSTRAINT ON (a:Author) ASSERT a.username IS UNIQUE;
 CREATE CONSTRAINT ON (a:Author) ASSERT a.email IS UNIQUE;
 ```
+
 # Data
 
 ```
@@ -68,4 +77,17 @@ RETURN p,r,t;
 MATCH (p:Post {slug:'my-first-blog-post'}), (c:Category {slug:'general'})
 MERGE (p)-[r:CATEGORIZED_AS]->(c)
 RETURN p,r,c;
+```
+
+
+# GraphGen spec
+
+```
+(p:Post {slug: slug, title: sentence, date: unixTime, body: paragraph} *20)
+(t:Tag {title: sentence, slug: slug} *15)
+(c:Category {title: sentence, slug: slug} *5)
+(a:Author {username: username, email: email, firstName: firstName, lastName: lastName} *2)
+(p)-[:AUTHORED_BY *n..1]->(a *1)
+(p)-[:TAGGED_WITH *n..n]->(t *2)
+(p)-[:CATEGORIZED_AS *n..n]->(c *1)
 ```
