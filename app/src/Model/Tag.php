@@ -4,7 +4,7 @@ namespace GraphBlog\Model;
 
 use \stdClass;
 
-class Tag extends AbstractModel implements \JsonSerializable
+class Tag extends AbstractModel
 {
     /**
      * @var string

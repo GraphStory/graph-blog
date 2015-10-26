@@ -4,7 +4,7 @@ namespace GraphBlog\Model;
 
 use \stdClass;
 
-class Category extends AbstractModel implements \JsonSerializable
+class Category extends AbstractModel
 {
     /**
      * @var string
