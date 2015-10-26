@@ -41,6 +41,6 @@ $container['logger'] = function ($c) {
 // Action factories
 // -----------------------------------------------------------------------------
 
-$container['App\Action\HomeAction'] = function ($c) {
-    return new App\Action\HomeAction($c->get('view'), $c->get('logger'));
+$container['GraphBlog\Action\HomeAction'] = function ($c) {
+    return new GraphBlog\Action\HomeAction($c->get('view'), $c->get('logger'));
 };
