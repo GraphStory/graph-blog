@@ -25,17 +25,19 @@ class PostService
         $this->logger = $logger;
     }
 
-    public function getPosts() {}
+    public function getPosts($limit, $skip) {}
 
     public function getPostBySlug($slug) {
         return $this->postRepository->getBySlug($slug);
     }
 
-    public function getPostWithEverything() {}
+    public function getPostBySlugWithEverything($slug) {
+        return $this->postRepository->getBySlugWithEverything($slug);
+    }
 
-    public function getPostByAuthor() {}
+    public function getPostsByAuthor($username, $limit, $skip) {}
 
-    public function getPostsByTag() {}
+    public function getPostsByTag($tagSlug, $limit, $skip) {}
 
-    public function getPostsByCategory() {}
+    public function getPostsByCategory($catSlug, $limit, $skip) {}
 }
