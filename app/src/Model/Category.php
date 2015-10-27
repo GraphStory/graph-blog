@@ -40,15 +40,4 @@ class Category extends AbstractModel
         $category->title = $obj->title;
         return $category;
     }
-
-    /**
-     * @return array
-     */
-    public function JsonSerialize()
-    {
-        return [
-            'slug' => $this->slug,
-            'title' => $this->title,
-        ];
-    }
 }

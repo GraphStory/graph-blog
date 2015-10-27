@@ -39,15 +39,4 @@ class Tag extends AbstractModel
         $tag->title = $obj->title;
         return $tag;
     }
-
-    /**
-     * @return array
-     */
-    public function JsonSerialize()
-    {
-        return [
-            'slug' => $this->slug,
-            'title' => $this->title,
-        ];
-    }
 }

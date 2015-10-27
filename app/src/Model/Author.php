@@ -53,17 +53,4 @@ class Author extends AbstractModel
         $author->lastName = $obj->lastName;
         return $author;
     }
-
-    /**
-     * @return array
-     */
-    public function JsonSerialize()
-    {
-        return [
-            'username' => $this->username,
-            'email' => $this->email,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-        ];
-    }
 }

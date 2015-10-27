@@ -89,22 +89,6 @@ class Post extends AbstractModel
     }
 
     /**
-     * @return array
-     */
-    public function JsonSerialize()
-    {
-        return [
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'date' => $this->date,
-            'body' => $this->body,
-            'author' => $this->author,
-            'tags' => $this->tags,
-            'category' => $this->category,
-        ];
-    }
-
-    /**
      * @param Author $author
      */
     protected function setAuthor(Author $author)
@@ -138,5 +122,31 @@ class Post extends AbstractModel
             }
             $this->categories[] = $category;
         }
+    }
+
+    /**
+     * a version specific to Post that handles author, tags and categories
+     * @return array
+     */
+    public function toArray()
+    {
+        $arr = [
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'date' => $this->date,
+            'body' => $this->body,
+            'author' => $this->author->toArray(),
+            'tags' => [],
+            'categories' => [],
+        ];
+
+        foreach($this->tags as $tag) {
+            $arr['tags'] = $tag->toArray();
+        }
+
+        foreach($this->categories as $category) {
+            $arr['categories'] = $category->toArray();
+        }
+        return $arr;
     }
 }

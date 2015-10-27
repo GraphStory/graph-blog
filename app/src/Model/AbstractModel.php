@@ -18,4 +18,14 @@ abstract class AbstractModel implements \JsonSerializable
      * @param StdClass $props
      */
     public static function fromObject(stdClass $props) {}
+
+    public function toArray()
+    {
+        return (array)$this;
+    }
+
+    public function JsonSerialize()
+    {
+        return $this->toArray();
+    }
 }
