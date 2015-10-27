@@ -26,6 +26,20 @@ class Post extends AbstractModel
      */
     public $body;
 
+    /**
+     * @var Tag[]
+     */
+    public $tags = [];
+
+    /**
+     * @var Category[]
+     */
+    public $categories = [];
+
+    /**
+     * @var Author
+     */
+    public $author;
 
     /**
      * @param array $props
@@ -38,6 +52,15 @@ class Post extends AbstractModel
         $post->slug = $props['slug'];
         $post->date = $props['date'];
         $post->body = $props['body'];
+        if (!empty($props['tags'])) {
+            $post->setTags($props['tags']);
+        }
+        if (!empty($props['categories'])) {
+            $post->setCategories($props['categories']);
+        }
+        if (!empty($props['author'])) {
+            $post->setAuthor($props['author']);
+        }
         return $post;
     }
 
@@ -52,6 +75,16 @@ class Post extends AbstractModel
         $post->slug = $obj->slug;
         $post->date = $obj->date;
         $post->body = $obj->body;
+        if (!empty($obj->tags)) {
+            $post->setTags($obj->tags);
+        }
+        if (!empty($obj->categories)) {
+            $post->setCategories($obj->categories);
+        }
+        if (!empty($obj->author)) {
+            $post->setAuthor($obj->author);
+        }
+
         return $post;
     }
 
@@ -65,6 +98,45 @@ class Post extends AbstractModel
             'slug' => $this->slug,
             'date' => $this->date,
             'body' => $this->body,
+            'author' => $this->author,
+            'tags' => $this->tags,
+            'category' => $this->category,
         ];
+    }
+
+    /**
+     * @param Author $author
+     */
+    protected function setAuthor(Author $author)
+    {
+        $this->author = $author;
+    }
+
+    /**
+     * @param array $tags  An array of \GraphBlog\Model\Tag objects
+     */
+    protected function setTags(array $tags)
+    {
+        $this->tags = [];
+        foreach ($tags as $tag) {
+            if (!$tag instanceof Tag) {
+                throw new \UnexpectedValueException('Tag value must be an instance of Tag');
+            }
+            $this->tags[] = $tag;
+        }
+    }
+
+    /**
+     * @param array $categories  An array of \GraphBlog\Model\Category objects
+     */
+    protected function setCategories(array $categories)
+    {
+        $this->categories = [];
+        foreach ($categories as $category) {
+            if (!$category instanceof Category) {
+                throw new \UnexpectedValueException('category value must be an instance of Category');
+            }
+            $this->categories[] = $category;
+        }
     }
 }
