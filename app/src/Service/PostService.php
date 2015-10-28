@@ -25,19 +25,21 @@ class PostService
         $this->logger = $logger;
     }
 
-    public function getPosts($limit, $skip) {}
-
-    public function getPostBySlug($slug) {
-        return $this->postRepository->getBySlug($slug);
+    public function getPosts($limit = 10, $skip = 0, $extended = false) {
+        return $this->postRepository->getPosts($limit, $skip, $extended);
     }
 
-    public function getPostBySlugWithEverything($slug) {
-        return $this->postRepository->getBySlugWithEverything($slug);
+    public function getPostBySlug($slug, $extended = false) {
+        return $this->postRepository->getBySlug($slug, $extended);
     }
 
-    public function getPostsByAuthor($username, $limit, $skip) {}
+    public function getPostsByAuthor($username, $limit = 10, $skip = 0) {
+        return $this->postRepository->getPostsByAuthor($username, $limit, $skip);
+    }
 
-    public function getPostsByTag($tagSlug, $limit, $skip) {}
+    public function getPostsByTag($tagSlug, $limit = 10, $skip = 0) {
+        return $this->postRepository->getPostsByTag($tagSlug, $limit, $skip);
+    }
 
-    public function getPostsByCategory($catSlug, $limit, $skip) {}
+    public function getPostsByCategory($catSlug, $limit = 10, $skip = 0) {}
 }
