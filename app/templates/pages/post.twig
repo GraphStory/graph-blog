@@ -1,0 +1,11 @@
+{% extends "layouts/default.twig" %}
+
+{% block content %}
+<article>
+<h3><a href="#">{{post.title}}</a></h3>
+<h6>Written by <a href="/authors/{{post.author.username}}">{{post.author.firstName}} {{post.author.lastname}}</a> on {{post.date}}.</h6>
+
+{{post.body}}
+
+</article>
+{% endblock content %}
