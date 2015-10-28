@@ -27,56 +27,116 @@ class PostRepository extends AbstractRepository
         $this->logger = $logger;
     }
 
-    public function getBySlug($slug)
+    public function getBySlug($slug, $extended = true)
     {
-        $cql = "
-        MATCH (p:Post {slug: {slug} })
-        RETURN p;
-        ";
-
-        $params = compact('slug');
-        $response = $this->client->sendCypherQuery($cql, $params);
-        $result = $response->getResult();
-        $node = $result->getSingleNode();
-        if ($node) {
-            return Post::fromArray($node->getProperties());
+        if ($extended) {
+            return $this->getBySlugExtended($slug);
         }
-        return null;
-   }
-
-    public function getBySlugWithEverything($slug)
-    {
         $cql = "
-        MATCH (p:Post {slug: {slug} })-[:TAGGED_WITH]->(t:Tag),
-        (p)-[:CATEGORIZED_AS]->(c:Category),
-        (p)-[:AUTHORED_BY]->(a:Author)
-        RETURN p, COLLECT(t) as tags, COLLECT(c) as categories, a;
+        MATCH (post:Post {slug: {slug} })
+        RETURN post;
         ";
 
         $params = compact('slug');
         $response = $this->client->sendCypherQuery($cql, $params);
         $result = $response->getResult();
         if ($result->getNodesCount() > 0) {
-            /*
-             * We build an array of properties
-             */
-            $props = $result->getSingleNode('Post')->getProperties();
-
-            $props['categories'] = [];
-            foreach ($result->getNodesByLabel('Category') as $catNode) {
-                $props['categories'][] = Category::fromArray($catNode->getProperties());
-            }
-
-            $props['tags'] = [];
-            foreach ($result->getNodesByLabel('Tag') as $tagNode) {
-                $props['tags'][] = Tag::fromArray($tagNode->getProperties());
-            }
-
-            $props['author'] = Author::fromArray($result->getSingleNode('Author')->getProperties());
-
-            return Post::fromArray($props);
+            return $this->postTableFormatToModels($result->getTableFormat())[0];
         }
-
         return null;
    }
+
+    public function getBySlugExtended($slug)
+    {
+        $cql = "
+        MATCH (post:Post {slug: {slug} })-[:TAGGED_WITH]->(t:Tag),
+        (post)-[:CATEGORIZED_AS]->(c:Category),
+        (post)-[:AUTHORED_BY]->(author:Author)
+        RETURN post, COLLECT(t) as tags, COLLECT(c) as categories, author;
+        ";
+
+        $params = compact('slug');
+        $response = $this->client->sendCypherQuery($cql, $params);
+        $result = $response->getResult();
+        if ($result->getNodesCount() > 0) {
+            return $this->postExtendedTableFormatToModels($result->getTableFormat())[0];
+        }
+        return null;
+    }
+
+    public function getPosts($limit = 10, $skip = 0, $extended = false)
+    {
+        /*
+         * we have to cast these here because the parameterized input only works within node properties AFAICT
+         */
+        $limit = (int)$limit;
+        $skip = (int)$skip;
+
+        if ($extended) {
+            return $this->getPostsExtended($limit, $skip);
+        }
+
+        $cql = "
+        MATCH (post:Post)
+        ORDER BY post.date
+        return post
+        SKIP {$skip}
+        LIMIT {$limit};
+        ";
+        $response = $this->client->sendCypherQuery($cql);
+        $result = $response->getResult();
+        if ($result->getNodesCount() > 0) {
+            return $this->postTableFormatToModels($result->getTableFormat());
+        }
+        return null;
+
+    }
+
+    public function getPostsExtended($limit = 10, $skip = 0)
+    {
+        $cql = "
+        MATCH (post:Post)-[:TAGGED_WITH]->(t:Tag),
+        (post)-[:CATEGORIZED_AS]->(c:Category),
+        (post)-[:AUTHORED_BY]->(author:Author)
+        RETURN post, COLLECT(t) as tags, COLLECT(c) as categories, author
+        ORDER BY post.date
+        SKIP {$skip}
+        LIMIT {$limit};
+        ";
+        $response = $this->client->sendCypherQuery($cql);
+        $result = $response->getResult();
+        if ($result->getNodesCount() > 0) {
+            return $this->postExtendedTableFormatToModels($result->getTableFormat());
+        }
+        return null;
+    }
+
+    protected function postTableFormatToModels($tableResults)
+    {
+        $posts = [];
+        foreach ($tableResults as $row) {
+            $posts[] = Post::fromArray($row['post']);
+        }
+        return $posts;
+    }
+
+
+    protected function postExtendedTableFormatToModels($tableResults)
+    {
+        $posts = [];
+        foreach ($tableResults as $row) {
+            $props = $row['post'];
+            $props['categories'] = [];
+            foreach ($row['categories'] as $categoryArray) {
+                $props['categories'][] = Category::fromArray($categoryArray);
+            }
+            $props['tags'] = [];
+            foreach ($row['tags'] as $tagArray) {
+                $props['tags'][] = Tag::fromArray($tagArray);
+            }
+            $props['author'] = Author::fromArray($row['author']);
+            $posts[] = Post::fromArray($props);
+        }
+        return $posts;
+    }
 }
