@@ -52,7 +52,7 @@ class PostRepository extends AbstractRepository
         MATCH (post:Post {slug: {slug} })-[:TAGGED_WITH]->(t:Tag),
         (post)-[:CATEGORIZED_AS]->(c:Category),
         (post)-[:AUTHORED_BY]->(author:Author)
-        RETURN post, COLLECT(t) as tags, COLLECT(c) as categories, author;
+        RETURN post, COLLECT(DISTINCT t) as tags, COLLECT(DISTINCT c) as categories, author;
         ";
 
         $params = compact('slug');
@@ -98,7 +98,7 @@ class PostRepository extends AbstractRepository
         MATCH (post:Post)-[:TAGGED_WITH]->(t:Tag),
         (post)-[:CATEGORIZED_AS]->(c:Category),
         (post)-[:AUTHORED_BY]->(author:Author)
-        RETURN post, COLLECT(t) as tags, COLLECT(c) as categories, author
+        RETURN post, COLLECT(DISTINCT t) as tags, COLLECT(DISTINCT c) as categories, author
         ORDER BY post.date
         SKIP {$skip}
         LIMIT {$limit};
