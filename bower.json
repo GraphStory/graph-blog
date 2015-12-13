@@ -1,0 +1,23 @@
+{
+  "name": "graph-blog",
+  "version": "0.0.0",
+  "homepage": "https://github.com/GraphStory/graph-blog",
+  "authors": [
+    "Ed Finkler <ed.finkler@graphstory.com>"
+  ],
+  "description": "A simple blog proof of concept using Neo4j",
+  "license": "Apache",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "jquery": "~2.1.4"
+  }
+}
