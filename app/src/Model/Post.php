@@ -141,11 +141,11 @@ class Post extends AbstractModel
         ];
 
         foreach($this->tags as $tag) {
-            $arr['tags'] = $tag->toArray();
+            $arr['tags'][] = $tag->toArray();
         }
 
         foreach($this->categories as $category) {
-            $arr['categories'] = $category->toArray();
+            $arr['categories'][] = $category->toArray();
         }
         return $arr;
     }
