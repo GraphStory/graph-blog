@@ -1,0 +1,14 @@
+{% extends "layouts/default.twig" %}
+
+{% block content %}
+    {% for post in posts %}
+    <h3><a href="{{ path_for('get-post', {'postSlug':post.slug}) }}">{{post.title}}</a></h3>
+    <h6>
+        Written by <a href="/authors/{{post.author.username}}">{{post.author.firstName}} {{post.author.lastname}}</a>
+        on {{post.date}}
+        in {% for category in post.categories %}
+            <a href="{{ base_url() }}/category/{{ category.slug }}">{{ category.title }}</a>,
+        {% endfor %}
+    </h6>
+    {% endfor %}
+{% endblock content %}
